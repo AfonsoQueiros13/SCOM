@@ -9,6 +9,6 @@
   "author": "Allen Kim",
   "license": "ISC",
   "dependencies": {
-    "bencode": "^2.0.1"
+    "bencode": "^0.9.0"
   }
 }
