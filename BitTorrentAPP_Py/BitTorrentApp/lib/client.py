@@ -9,6 +9,8 @@ from collections import namedtuple, defaultdict
 from hashlib import sha1
 from lib.protocol import PeerConnection, REQUEST_SIZE
 from lib.tracker import Tracker
+import threading
+
 
 # The number of max peer connections per TorrentClient
 MAX_PEER_CONNECTIONS = 40
@@ -29,6 +31,7 @@ class TorrentClient:
     (or worse yet processes) we can create them all at once and they will
     be waiting until there is a peer to consume in the queue.
     """
+
     def __init__(self, torrent):
         self.tracker = Tracker(torrent)
         # The list of potential peers is the work queue, consumed by the
@@ -77,7 +80,6 @@ class TorrentClient:
                     first=previous if previous else False,
                     uploaded=self.piece_manager.bytes_uploaded,
                     downloaded=self.piece_manager.bytes_downloaded)
-
                 if response:
                     previous = current
                     interval = response.interval
@@ -147,6 +149,7 @@ class Piece:
     to as `Block` by the unofficial specification (the official specification
     uses piece for this one as well, which is slightly confusing).
     """
+
     def __init__(self, index: int, blocks: [], hash_value):
         self.index = index
         self.blocks = blocks
@@ -216,6 +219,7 @@ class Piece:
         blocks_data = [b.data for b in retrieved]
         return b''.join(blocks_data)
 
+
 # The type used for keeping track of pending request that can be re-issued
 PendingRequest = namedtuple('PendingRequest', ['block', 'added'])
 
@@ -229,6 +233,7 @@ class PieceManager:
     The strategy on which piece to request is made as simple as possible in
     this implementation.
     """
+
     def __init__(self, torrent):
         self.torrent = torrent
         self.peers = {}
@@ -240,6 +245,7 @@ class PieceManager:
         self.missing_pieces = self._initiate_pieces()
         self.total_pieces = len(torrent.pieces)
         self.fd = os.open(self.torrent.output_file,  os.O_RDWR | os.O_CREAT)
+        self.piecesdownloaded = 0
 
     def _initiate_pieces(self) -> [Piece]:
         """
@@ -355,6 +361,19 @@ class PieceManager:
                 block = self._get_rarest_piece(peer_id).next_request()
         return block
 
+    def downloadvelocity(self, torrent):
+        """
+        This method calculates download speed in b/s.
+        """
+        self.torrent = torrent
+        self.size_torrent = self.torrent.files[0].length
+        threading.Timer(1.0, PieceManager.downloadvelocity).start()
+        print("Complete Packets until now : ",self.completepackets)
+        print("Pieces downloaded : ",self.piecesdownloaded)
+        self.downloadspeed = (self.completepackets - self.piecesdownloaded) * REQUEST_SIZE
+        self.piecesdownloaded = self.completepackets
+        print("Speed of Download (b/s): ", self.downloadspeed)
+
     def block_received(self, peer_id, piece_index, block_offset, data):
         """
         This method must be called when a block has successfully been retrieved
@@ -365,6 +384,7 @@ class PieceManager:
         be fetched again. If the hash succeeds the partial piece is written to
         disk and the piece is indicated as Have.
         """
+        torrent = self.torrent
         logging.debug('Received block {block_offset} for piece {piece_index} '
                       'from peer {peer_id}: '.format(block_offset=block_offset,
                                                      piece_index=piece_index,
@@ -389,11 +409,15 @@ class PieceManager:
                     complete = (self.total_pieces -
                                 len(self.missing_pieces) -
                                 len(self.ongoing_pieces))
+                    self.completepackets = complete
                     logging.info(
                         '{complete} / {total} pieces downloaded {per:.3f} %'
                         .format(complete=complete,
                                 total=self.total_pieces,
                                 per=(complete/self.total_pieces)*100))
+                    self.completepackets = complete
+                    print("COMPLETE PACKETS : ",self.completepackets)
+                    PieceManager.downloadvelocity(self,torrent)
                 else:
                     logging.info('Discarding corrupt piece {index}'
                                  .format(index=piece.index))
@@ -437,6 +461,25 @@ class PieceManager:
                     return block
         return None
 
+    def _next_missing(self, peer_id) -> Block:
+        """
+        Go through the missing pieces and return the next block to request
+        or None if no block is left to be requested.
+
+        This will change the state of the piece from missing to ongoing - thus
+        the next call to this function will not continue with the blocks for
+        that piece, rather get the next missing piece.
+        """
+        for index, piece in enumerate(self.missing_pieces):
+            if self.peers[peer_id][piece.index]:
+                # Move this piece from missing to ongoing
+                piece=self.missing_pieces.pop(index)
+                self.ongoing_pieces.append(piece)
+                # The missing pieces does not have any previously requested
+                # blocks (then it is ongoing).
+                return piece.next_request()
+        return None
+
     def _get_rarest_piece(self, peer_id):
         """
         Given the current list of missing pieces, get the
@@ -450,35 +493,15 @@ class PieceManager:
             for p in self.peers:
                 if self.peers[p][piece.index]:
                     piece_count[piece] += 1
-
         rarest_piece = min(piece_count, key=lambda p: piece_count[p])
         self.missing_pieces.remove(rarest_piece)
         self.ongoing_pieces.append(rarest_piece)
         return rarest_piece
 
-    def _next_missing(self, peer_id) -> Block:
-        """
-        Go through the missing pieces and return the next block to request
-        or None if no block is left to be requested.
-
-        This will change the state of the piece from missing to ongoing - thus
-        the next call to this function will not continue with the blocks for
-        that piece, rather get the next missing piece.
-        """
-        for index, piece in enumerate(self.missing_pieces):
-            if self.peers[peer_id][piece.index]:
-                # Move this piece from missing to ongoing
-                piece = self.missing_pieces.pop(index)
-                self.ongoing_pieces.append(piece)
-                # The missing pieces does not have any previously requested
-                # blocks (then it is ongoing).
-                return piece.next_request()
-        return None
-
     def _write(self, piece):
         """
         Write the given piece to disk
         """
-        pos = piece.index * self.torrent.piece_length
+        pos=piece.index * self.torrent.piece_length
         os.lseek(self.fd, pos, os.SEEK_SET)
         os.write(self.fd, piece.data)
