@@ -117,7 +117,6 @@ class Decoder:
         bytes_to_read = int(self._read_until(TOKEN_STRING_SEPARATOR))
         data = self._read(bytes_to_read)
         print(data)
-        time.sleep(1)
         return data
 
 

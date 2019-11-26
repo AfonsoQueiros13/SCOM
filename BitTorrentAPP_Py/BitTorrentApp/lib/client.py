@@ -361,18 +361,17 @@ class PieceManager:
                 block = self._get_rarest_piece(peer_id).next_request()
         return block
 
-    def downloadvelocity(self, torrent):
+    def downloadvelocity(self,torrent):
         """
         This method calculates download speed in b/s.
         """
-        self.torrent = torrent
-        self.size_torrent = self.torrent.files[0].length
-        threading.Timer(1.0, PieceManager.downloadvelocity).start()
+        self.torrent=torrent
         print("Complete Packets until now : ",self.completepackets)
         print("Pieces downloaded : ",self.piecesdownloaded)
         self.downloadspeed = (self.completepackets - self.piecesdownloaded) * REQUEST_SIZE
         self.piecesdownloaded = self.completepackets
-        print("Speed of Download (b/s): ", self.downloadspeed)
+        print("Speed of Download : ", self.downloadspeed/10000.0, "Kb/s")
+
 
     def block_received(self, peer_id, piece_index, block_offset, data):
         """
@@ -384,12 +383,11 @@ class PieceManager:
         be fetched again. If the hash succeeds the partial piece is written to
         disk and the piece is indicated as Have.
         """
-        torrent = self.torrent
         logging.debug('Received block {block_offset} for piece {piece_index} '
                       'from peer {peer_id}: '.format(block_offset=block_offset,
                                                      piece_index=piece_index,
                                                      peer_id=peer_id))
-
+        torrent=self.torrent
         # Remove from pending requests
         for index, request in enumerate(self.pending_blocks):
             if request.block.piece == piece_index and \
@@ -417,7 +415,7 @@ class PieceManager:
                                 per=(complete/self.total_pieces)*100))
                     self.completepackets = complete
                     print("COMPLETE PACKETS : ",self.completepackets)
-                    PieceManager.downloadvelocity(self,torrent)
+                    threading.Timer(1, PieceManager.downloadvelocity,args=(self,torrent,)).start()
                 else:
                     logging.info('Discarding corrupt piece {index}'
                                  .format(index=piece.index))
