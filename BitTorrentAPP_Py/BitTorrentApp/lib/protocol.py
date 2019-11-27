@@ -20,7 +20,7 @@ import logging
 import struct
 from asyncio import Queue
 from concurrent.futures import CancelledError
-
+import time
 import bitstring
 
 # The default request size for blocks of pieces is 2^14 bytes.
@@ -87,10 +87,11 @@ class PeerConnection:
         self.future = asyncio.ensure_future(self._start())  # Start this worker
 
     async def _start(self):
+        
         while 'stopped' not in self.my_state:
             ip, port = await self.queue.get()
             logging.info('Got assigned peer with: {ip}'.format(ip=ip))
-
+            print(list(self.queue._queue))
             try:
                 # TODO For some reason it does not seem to work to open a new
                 # connection if the first one drops (i.e. second loop).

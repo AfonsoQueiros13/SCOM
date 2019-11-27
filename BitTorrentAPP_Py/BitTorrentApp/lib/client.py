@@ -60,12 +60,10 @@ class TorrentClient:
                                      self.piece_manager,
                                      self._on_block_retrieved)
                       for _ in range(MAX_PEER_CONNECTIONS)]
-
         # The time we last made an announce call (timestamp)
         previous = None
         # Default interval between announce calls (in seconds)
         interval = 30*60
-
         while True:
             if self.piece_manager.complete:
                 logging.info('Torrent fully downloaded!')
@@ -93,7 +91,7 @@ class TorrentClient:
     def _empty_queue(self):
         while not self.available_peers.empty():
             self.available_peers.get_nowait()
-
+            
     def stop(self):
         """
         Stop the download or seeding process.
@@ -109,7 +107,7 @@ class TorrentClient:
         Callback function called by the `PeerConnection` when a block is
         retrieved from a peer.
 
-        :param peer_id: The id of the peer the block was retrieved from
+        :param peer_id: The id of thelf.available_peerse peer the block was retrieved from
         :param piece_index: The piece index this block is a part of
         :param block_offset: The block offset within its piece
         :param data: The binary data retrieved

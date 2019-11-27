@@ -119,7 +119,7 @@ class Tracker:
         params = {
             'info_hash': self.torrent.info_hash,
             'peer_id': self.peer_id,
-            'port': 6889,
+            'port': 6969,
             'uploaded': uploaded,
             'downloaded': downloaded,
             'left': self.torrent.total_size - downloaded,
@@ -163,7 +163,7 @@ class Tracker:
         return {
             'info_hash': self.torrent.info_hash,
             'peer_id': self.peer_id,
-            'port': 6889,
+            'port': 6969,
             # TODO Update stats when communicating with tracker
             'uploaded': 0,
             'downloaded': 0,
