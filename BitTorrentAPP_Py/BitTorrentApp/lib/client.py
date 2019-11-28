@@ -413,6 +413,7 @@ class PieceManager:
                                 per=(complete/self.total_pieces)*100))
                     self.completepackets = complete
                     print("COMPLETE PACKETS : ",self.completepackets)
+                    #TIMER FOR CALCULATE DOWNLOADSPEED
                     threading.Timer(1, PieceManager.downloadvelocity,args=(self,torrent,)).start()
                 else:
                     logging.info('Discarding corrupt piece {index}'

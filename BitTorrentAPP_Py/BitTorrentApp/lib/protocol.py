@@ -31,7 +31,7 @@ import bitstring
 #
 #       https://wiki.theory.org/BitTorrentSpecification
 #
-REQUEST_SIZE = 2**14
+REQUEST_SIZE = 2**15
 
 
 class ProtocolError(BaseException):
