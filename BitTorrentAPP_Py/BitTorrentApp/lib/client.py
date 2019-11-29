@@ -91,7 +91,7 @@ class TorrentClient:
     def _empty_queue(self):
         while not self.available_peers.empty():
             self.available_peers.get_nowait()
-            
+
     def stop(self):
         """
         Stop the download or seeding process.
@@ -359,17 +359,17 @@ class PieceManager:
                 block = self._get_rarest_piece(peer_id).next_request()
         return block
 
-    def downloadvelocity(self,torrent):
+    def downloadvelocity(self, torrent):
         """
         This method calculates download speed in b/s.
         """
-        self.torrent=torrent
-        print("Complete Packets until now : ",self.completepackets)
-        print("Pieces downloaded : ",self.piecesdownloaded)
-        self.downloadspeed = (self.completepackets - self.piecesdownloaded) * REQUEST_SIZE
+        self.torrent = torrent
+        print("Complete Packets until now : ", self.completepackets)
+        print("Pieces downloaded : ", self.piecesdownloaded)
+        self.downloadspeed = (self.completepackets -
+                              self.piecesdownloaded) * REQUEST_SIZE
         self.piecesdownloaded = self.completepackets
         print("Speed of Download : ", self.downloadspeed/10000.0, "Kb/s")
-
 
     def block_received(self, peer_id, piece_index, block_offset, data):
         """
@@ -385,7 +385,7 @@ class PieceManager:
                       'from peer {peer_id}: '.format(block_offset=block_offset,
                                                      piece_index=piece_index,
                                                      peer_id=peer_id))
-        torrent=self.torrent
+        torrent = self.torrent
         # Remove from pending requests
         for index, request in enumerate(self.pending_blocks):
             if request.block.piece == piece_index and \
@@ -412,9 +412,10 @@ class PieceManager:
                                 total=self.total_pieces,
                                 per=(complete/self.total_pieces)*100))
                     self.completepackets = complete
-                    print("COMPLETE PACKETS : ",self.completepackets)
-                    #TIMER FOR CALCULATE DOWNLOADSPEED
-                    threading.Timer(1, PieceManager.downloadvelocity,args=(self,torrent,)).start()
+                    print("COMPLETE PACKETS : ", self.completepackets)
+                    # TIMER FOR CALCULATE DOWNLOADSPEED
+                    threading.Timer(1, PieceManager.downloadvelocity,
+                                    args=(self, torrent,)).start()
                 else:
                     logging.info('Discarding corrupt piece {index}'
                                  .format(index=piece.index))
@@ -436,8 +437,8 @@ class PieceManager:
                 if request.added + self.max_pending_time < current:
                     logging.info('Re-requesting block {block} for '
                                  'piece {piece}'.format(
-                                    block=request.block.offset,
-                                    piece=request.block.piece))
+                                     block=request.block.offset,
+                                     piece=request.block.piece))
                     # Reset expiration timer
                     request.added = current
                     return request.block
@@ -470,7 +471,7 @@ class PieceManager:
         for index, piece in enumerate(self.missing_pieces):
             if self.peers[peer_id][piece.index]:
                 # Move this piece from missing to ongoing
-                piece=self.missing_pieces.pop(index)
+                piece = self.missing_pieces.pop(index)
                 self.ongoing_pieces.append(piece)
                 # The missing pieces does not have any previously requested
                 # blocks (then it is ongoing).
@@ -499,6 +500,6 @@ class PieceManager:
         """
         Write the given piece to disk
         """
-        pos=piece.index * self.torrent.piece_length
+        pos = piece.index * self.torrent.piece_length
         os.lseek(self.fd, pos, os.SEEK_SET)
         os.write(self.fd, piece.data)
