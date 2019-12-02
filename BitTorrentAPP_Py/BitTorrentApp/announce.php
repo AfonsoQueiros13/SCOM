@@ -26,7 +26,7 @@
  * This allows anyone to see the entire peer database by appending ?debug to the announce URL.
  * It will also create debugging file used to report php errors.
  */
-define('__DEBUGGING_ENABLED', true);
+define('__DEBUGGING_ENABLED', false);
 
 /**
  * Version
@@ -66,7 +66,7 @@ define('__NO_SEED_P2P', true);
  * On Linux, you should use /dev/shm as it is very fast.
  * On Windows, you will need to change this value to some other valid path such as C:/Peers.txt
  */
-define('__LOCATION_PEERS', '/var/www/cgi-bin/peers.txt');
+define('__LOCATION_PEERS', '/var/www/html/peers.txt');
 
 /**
  * Should we enable short announces?
@@ -120,7 +120,7 @@ function track($list, $interval = 60, $min_ival = 0)
     $p = ''; //Peer directory
     $c = $i = 0; //Complete and Incomplete clients
 
-    foreach ($list as $d) { //Runs for each client
+    foreach ($list as $d) {
         if ($d[7]) { //Are we seeding?
             $c++; //Seeding, add to complete list
             if (__NO_SEED_P2P && is_seed()) { //Seeds should not see each others
@@ -134,12 +134,12 @@ function track($list, $interval = 60, $min_ival = 0)
         $pid = '';
 
         if (isset($_GET['no_peer_id']) === false && __NO_PEER_ID) { //Shall we include the peer id
+		
             $pid = '7:peer id' . strlen($d[1]) . ':' . $d[1];
         }
-
         $p .= 'd2:ip' . strlen($d[0]) . ':' . $d[0] . $pid . '4:porti' . $d[2] . 'ee';
     }
-
+//complete downloaded incomplete intervalo minimointervalo peers
     //Add some other paramters in the dictionary and merge with peer list
     $r = 'd8:intervali' . $interval . 'e12:min intervali' . $min_ival . 'e8:completei' . $c . 'e10:incompletei' . $i . 'e5:peersl' . $p . 'ee';
 
@@ -163,7 +163,7 @@ function is_seed()
 //Save database to file
 function db_save($data)
 {
-    $b = serialize($data);
+    $b = serialize(array('172.16.2.21','-PC0001-285699819475','6969'));
     $handle = fopen(__LOCATION_PEERS, 'wb');
 
     if ($handle === false) {
@@ -260,6 +260,7 @@ if ($d === false) {
 //Do some input validation
 function valdata($g, $must_be_20_chars = false)
 {
+	
     if (!isset($_GET[$g])) {
         die(track('Missing one or more arguments'));
     }
@@ -281,6 +282,7 @@ valdata('info_hash', true);
 
 //Use the tracker key extension. Makes it much harder to steal a session.
 if (!isset($_GET['key'])) {
+
     $_GET['key'] = '';
 }
 valdata('key');
@@ -293,6 +295,7 @@ if (!ctype_digit($_GET['port']) || $_GET['port'] < 1 || $_GET['port'] > 65535) {
 //Array key, unique for each client and torrent
 $sum = sha1($_GET['peer_id'] . $_GET['info_hash']);
 
+
 //Make sure we've got a user agent to avoid errors
 //Used for debugging
 if (!isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -301,7 +304,6 @@ if (!isset($_SERVER['HTTP_USER_AGENT'])) {
 
 //When should we remove the client?
 $expire = time() + $interval;
-
 //Have this client registered itself before? Check that it uses the same key
 if (isset($d[$sum])) {
     if ((string)$d[$sum][6] !== (string)$_GET['key']) {
@@ -309,16 +311,11 @@ if (isset($d[$sum])) {
         die(track('Access denied, authentication failed'));
     }
 }
-
 //Add/update the client in our global list of clients, with some information
 $d[$sum] = [$_SERVER['REMOTE_ADDR'], $_GET['peer_id'], $_GET['port'], $expire, $_GET['info_hash'], $_SERVER['HTTP_USER_AGENT'], $_GET['key'], is_seed()];
 
 //No point in saving the user agent, unless we are debugging
-if (!__DEBUGGING_ENABLED) {
-    unset($d[$sum][5]);
-} elseif (!empty($_GET)) { //We are debugging, add GET parameters to database
-    $d[$sum]['get_parm'] = $_GET;
-}
+
 
 //Did the client stop the torrent?
 //We dont care about other events
@@ -331,7 +328,9 @@ if (isset($_GET['event']) && (string)$_GET['event'] === 'stopped') {
 }
 
 //Check if any client timed out
+
 foreach ($d as $k => $data) {
+
     if (time() > $data[3] + __CLIENT_TIMEOUT) { //Give the client some extra time before timeout
         unset($d[$k]); //Client has gone away, remove it
     }
@@ -342,17 +341,17 @@ db_save($d);
 
 //Compare info_hash to the rest of our clients and remove anyone who does not have the correct torrent
 foreach ($d as $id => $info) {
+
     if ((string)$info[4] !== (string)$_GET['info_hash']) {
         unset($d[$id]);
     }
 }
 
 // Remove self from list, no point in having ourselfes in the client dictionary
-unset($d[$sum]);
+#unset($d[$sum]);
 
 // Add a few more seconds on the timeout to balance the load
 $interval += mt_rand(0, 10);
-
 // Bencode the dictionary and send it back
 echo track($d, $interval, $interval_min);
 exit(0);
