@@ -34,6 +34,7 @@ class Decoder:
 
         :return A python object representing the bencoded data
         """
+        print(self._data)
         c = self._peek()
         if c is None:
             raise EOFError('Unexpected end-of-file')
