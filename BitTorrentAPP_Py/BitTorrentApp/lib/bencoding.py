@@ -34,7 +34,6 @@ class Decoder:
 
         :return A python object representing the bencoded data
         """
-        print(self._data)
         c = self._peek()
         if c is None:
             raise EOFError('Unexpected end-of-file')
@@ -53,7 +52,33 @@ class Decoder:
             return self._decode_string()
         else:
             raise RuntimeError('Invalid token read at {0}'.format(
-                str(self._index)))
+                str(c)))
+    def decode2(self):
+        """
+        Decodes the bencoded data and return the matching python object.
+
+        :return A python object representing the bencoded data
+        """
+        c = self._peek()
+        if c is None:
+            raise EOFError('Unexpected end-of-file')
+        elif c == TOKEN_INTEGER:
+            self._consume()  # The token
+            return self._decode_int()
+        elif c == TOKEN_LIST:
+            self._consume()  # The token
+            return self._decode_list()
+        elif c == TOKEN_DICT:
+            self._consume()  # The token
+            return self._decode_dict()
+        elif c == TOKEN_END:
+            return None
+        elif c in b'01234567899':
+            print("\n\n\n\n\n\n\nola")
+            return self._decode_string()
+        else:
+            self._consume()
+            #raise RuntimeError('Invalid token read at {0}'.format(str(c)))
 
     def _peek(self):
         """

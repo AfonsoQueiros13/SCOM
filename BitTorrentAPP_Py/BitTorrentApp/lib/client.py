@@ -9,6 +9,7 @@ from collections import namedtuple, defaultdict
 from hashlib import sha1
 from lib.protocol import PeerConnection, REQUEST_SIZE
 from lib.tracker import Tracker
+from . import bencoding
 import threading
 
 
@@ -244,6 +245,7 @@ class PieceManager:
         self.total_pieces = len(torrent.pieces)
         self.fd = os.open(self.torrent.output_file,  os.O_RDWR | os.O_CREAT)
         self.piecesdownloaded = 0
+        self.peers_id={}
 
     def _initiate_pieces(self) -> [Piece]:
         """
@@ -355,6 +357,7 @@ class PieceManager:
         block = self._expired_requests(peer_id)
         if not block:
             block = self._next_ongoing(peer_id)
+            #block = self._get_rarest_piece(peer_id).next_request()
             if not block:
                 block = self._get_rarest_piece(peer_id).next_request()
         return block
@@ -364,11 +367,16 @@ class PieceManager:
         This method calculates download speed in b/s.
         """
         self.torrent = torrent
-        print("Complete Packets until now : ", self.completepackets)
-        print("Pieces downloaded : ", self.piecesdownloaded)
+        #print("Complete Packets until now : ", self.completepackets)
+        #print("Pieces downloaded : ", self.piecesdownloaded)
         self.downloadspeed = (self.completepackets -
                               self.piecesdownloaded) * REQUEST_SIZE
         self.piecesdownloaded = self.completepackets
+        print(
+                        ' \n peer_id: {id} \n {complete} / {total} pieces downloaded {per:.3f} %'
+                        .format(id=self.peer_id, complete= self.completepackets,
+                                total=self.total_pieces,
+                                per=(self.completepackets/self.total_pieces)*100))
         print("Speed of Download : ", self.downloadspeed/10000.0, "Kb/s")
 
     def block_received(self, peer_id, piece_index, block_offset, data):
@@ -406,13 +414,8 @@ class PieceManager:
                                 len(self.missing_pieces) -
                                 len(self.ongoing_pieces))
                     self.completepackets = complete
-                    logging.info(
-                        '{complete} / {total} pieces downloaded {per:.3f} %'
-                        .format(complete=complete,
-                                total=self.total_pieces,
-                                per=(complete/self.total_pieces)*100))
-                    self.completepackets = complete
-                    print("COMPLETE PACKETS : ", self.completepackets)
+                    self.peer_id=peer_id
+                    bencoding.Decoder(peer_id).decode2()
                     # TIMER FOR CALCULATE DOWNLOADSPEED
                     threading.Timer(1, PieceManager.downloadvelocity,
                                     args=(self, torrent,)).start()

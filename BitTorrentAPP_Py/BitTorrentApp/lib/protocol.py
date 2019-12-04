@@ -90,14 +90,14 @@ class PeerConnection:
         
         while 'stopped' not in self.my_state:
             ip, port = await self.queue.get()
-            logging.info('Got assigned peer with: {ip}'.format(ip=ip))
-            print(list(self.queue._queue))
+            print('Got assigned peer with: {ip}'.format(ip=ip))
+           # print(list(self.queue._queue))
             try:
                 # TODO For some reason it does not seem to work to open a new
                 # connection if the first one drops (i.e. second loop).
                 self.reader, self.writer = await asyncio.open_connection(
                     ip, port)
-                logging.info('Connection open to peer: {ip}'.format(ip=ip))
+                print('Connection open to peer: {ip}'.format(ip=ip))
 
                 # It's our responsibility to initiate the handshake.
                 buffer = await self._handshake()
