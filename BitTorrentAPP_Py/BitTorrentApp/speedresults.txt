@@ -1,0 +1,126 @@
+Got assigned peer with: 185.107.95.123
+Got assigned peer with: 5.230.27.208
+Got assigned peer with: 71.150.226.54
+Got assigned peer with: 62.210.103.121
+Got assigned peer with: 104.245.79.213
+Got assigned peer with: 185.200.116.131
+Got assigned peer with: 85.227.86.177
+Got assigned peer with: 185.56.20.15
+Got assigned peer with: 185.21.216.143
+Got assigned peer with: 98.4.37.54
+Got assigned peer with: 109.184.71.56
+Got assigned peer with: 71.79.9.252
+Got assigned peer with: 82.44.67.142
+Got assigned peer with: 109.190.47.242
+Got assigned peer with: 91.123.219.66
+Got assigned peer with: 188.232.1.92
+Got assigned peer with: 80.199.63.106
+Got assigned peer with: 95.216.213.86
+Got assigned peer with: 193.71.138.32
+Got assigned peer with: 80.210.66.248
+Got assigned peer with: 185.203.56.17
+Got assigned peer with: 83.128.153.34
+Got assigned peer with: 63.225.80.2
+Got assigned peer with: 146.0.142.78
+Got assigned peer with: 195.154.243.53
+Got assigned peer with: 151.95.81.212
+Got assigned peer with: 71.242.92.11
+Got assigned peer with: 66.42.221.231
+Got assigned peer with: 62.210.103.121
+Got assigned peer with: 86.167.39.222
+Got assigned peer with: 80.104.37.58
+Got assigned peer with: 202.187.181.166
+Got assigned peer with: 5.135.154.52
+Got assigned peer with: 91.159.235.24
+Got assigned peer with: 136.56.48.249
+Got assigned peer with: 79.165.169.111
+Got assigned peer with: 91.65.20.106
+Got assigned peer with: 176.93.50.254
+Got assigned peer with: 78.55.67.142
+Got assigned peer with: 54.38.201.89
+Connection open to peer: 185.21.216.143
+Connection open to peer: 5.135.154.52
+Connection open to peer: 5.230.27.208
+Connection open to peer: 185.56.20.15
+Connection open to peer: 83.128.153.34
+Connection open to peer: 62.210.103.121
+Connection open to peer: 185.203.56.17
+Connection open to peer: 185.107.95.123
+Connection open to peer: 62.210.103.121
+Connection open to peer: 146.0.142.78
+Connection open to peer: 85.227.86.177
+Connection open to peer: 195.154.243.53
+Connection open to peer: 54.38.201.89
+Connection open to peer: 91.65.20.106
+Connection open to peer: 95.216.213.86
+Connection open to peer: 151.95.81.212
+Connection open to peer: 78.55.67.142
+Connection open to peer: 82.44.67.142
+Connection open to peer: 80.210.66.248
+Connection open to peer: 91.123.219.66
+Connection open to peer: 91.159.235.24
+Connection open to peer: 80.104.37.58
+Connection open to peer: 109.184.71.56
+Connection open to peer: 193.71.138.32
+Connection open to peer: 109.190.47.242
+Connection open to peer: 176.93.50.254
+Connection open to peer: 79.165.169.111
+Connection open to peer: 188.232.1.92
+Got assigned peer with: 81.169.197.59
+Got assigned peer with: 185.75.118.191
+Got assigned peer with: 91.224.179.221
+Got assigned peer with: 99.87.255.76
+Got assigned peer with: 78.199.53.237
+Connection open to peer: 86.167.39.222
+Got assigned peer with: 185.25.206.118
+Got assigned peer with: 46.4.26.96
+Got assigned peer with: 108.28.125.212
+Got assigned peer with: 74.101.125.173
+Got assigned peer with: 80.209.238.21
+Connection open to peer: 66.42.221.231
+Connection open to peer: 80.199.63.106
+Connection open to peer: 71.242.92.11
+Connection open to peer: 104.245.79.213
+Connection open to peer: 98.4.37.54
+Connection open to peer: 71.150.226.54
+Connection open to peer: 136.56.48.249
+Connection open to peer: 71.79.9.252
+Connection open to peer: 63.225.80.2
+Connection open to peer: 202.187.181.166
+Connection open to peer: 185.200.116.131
+ 
+ peer_id: b'-lt0D80-V\x9b_a\xac\xb0\xf4H7\xb2\xd2\x81' 
+ 2 / 4000 pieces downloaded 0.050 %
+Speed of Download :  6.5536 Kb/s
+ 
+ peer_id: b'-lt0D80-V\x9b_a\xac\xb0\xf4H7\xb2\xd2\x81' 
+ 3 / 4000 pieces downloaded 0.075 %
+Speed of Download :  3.2768 Kb/s
+ 
+ peer_id: b'-lt0D80-V\x9b_a\xac\xb0\xf4H7\xb2\xd2\x81' 
+ 3 / 4000 pieces downloaded 0.075 %
+Speed of Download :  0.0 Kb/s
+ 
+ peer_id: b'-lt0D80-V\x9b_a\xac\xb0\xf4H7\xb2\xd2\x81' 
+ 4 / 4000 pieces downloaded 0.100 %
+Speed of Download :  3.2768 Kb/s
+ 
+ peer_id: b'-lt0D60-\xa3\xb2R}eta-\xf4\xc4*j' 
+ 6 / 4000 pieces downloaded 0.150 %
+Speed of Download :  6.5536 Kb/s
+ 
+ peer_id: b'-lt0D80-\x02 \xb3q\xe4k\xe5\xe6O\xec\xad\x92' 
+ 7 / 4000 pieces downloaded 0.175 %
+Speed of Download :  3.2768 Kb/s
+ 
+ peer_id: b'-lt0D80-\x02 \xb3q\xe4k\xe5\xe6O\xec\xad\x92' 
+ 7 / 4000 pieces downloaded 0.175 %
+Speed of Download :  0.0 Kb/s
+ 
+ peer_id: b'-lt0D80-\x02 \xb3q\xe4k\xe5\xe6O\xec\xad\x92' 
+ 9 / 4000 pieces downloaded 0.225 %
+Speed of Download :  6.5536 Kb/s
+ 
+ peer_id: b'-lt0D80-\x02 \xb3q\xe4k\xe5\xe6O\xec\xad\x92' 
+ 9 / 4000 pieces downloaded 0.225 %
+Speed of Download :  0.0 Kb/s
