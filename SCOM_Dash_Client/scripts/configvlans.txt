@@ -1,0 +1,39 @@
+conf t
+vlan 200
+end
+
+conf t
+vlan 100
+end
+
+conf t
+interface fastethernet 0/1
+switchport mode access
+switchport access vlan 100
+end
+
+conf t
+interface fastethernet 0/2
+switchport mode access
+switchport access vlan 100
+end
+
+conf t
+interface fastethernet 0/13
+switchport mode access
+switchport access vlan 100
+end
+
+conf t
+interface fastethernet 0/14
+switchport mode access
+switchport access vlan 200
+end
+
+conf t
+interface gigabitethernet 0/1
+switchport mode access
+switchport access vlan 200
+end
+
+show vlan brief
